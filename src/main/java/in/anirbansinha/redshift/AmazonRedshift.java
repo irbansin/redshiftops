@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.File;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -47,8 +45,8 @@ public class AmazonRedshift {
         // q.drop();
         // q.create();
         // q.insert();
-        System.out.println(resultSetToString(q.query1(), 30));
-        // q.query2();
+        // System.out.println(resultSetToString(q.query1(), 30));
+        System.out.println(resultSetToString(q.query2(), 30));
         // q.query3();
         q.close();
     }
@@ -323,21 +321,26 @@ public class AmazonRedshift {
         // SQL Query to get the customer key and the total price spent by customers
         // who are outside Europe and belong to the largest market segment
         String query2SQL =
-            "WITH LargestMarketSegment AS (" +
-            "    SELECT C_MKTSEGMENT, COUNT(*) AS customer_count " +
-            "    FROM dev.customer " +
-            "    WHERE C_MKTSEGMENT IS NOT NULL " +
-            "    GROUP BY C_MKTSEGMENT " +
-            "    ORDER BY customer_count DESC " +
-            "    LIMIT 1" +
-            ") " +
-            "SELECT C.C_CUSTKEY, SUM(O.O_TOTALPRICE) AS total_spent " +
-            "FROM dev.customer C " +
-            "JOIN dev.orders O ON C.C_CUSTKEY = O.O_CUSTKEY " +
-            "JOIN dev.nation N ON C.C_NATIONKEY = N.N_NATIONKEY " +
-            "JOIN LargestMarketSegment L ON C.C_MKTSEGMENT = L.C_MKTSEGMENT " +
-            "WHERE N.N_NAME != 'Europe' AND O.O_ORDERSTATUS = 'U' " +
-            "GROUP BY C.C_CUSTKEY " +
+            "WITH LargestMarketSegment AS ( \r\n" + //
+            "    SELECT C_MKTSEGMENT, COUNT(*) AS customer_count  \r\n" + //
+            "    FROM dev.customer  \r\n" + //
+            "    WHERE C_MKTSEGMENT IS NOT NULL  \r\n" + //
+            "    GROUP BY C_MKTSEGMENT  \r\n" + //
+            "    ORDER BY customer_count DESC  \r\n" + //
+            "    LIMIT 1 \r\n" + //
+            ") \r\n" + //
+            "SELECT C.C_CUSTKEY, SUM(O.O_TOTALPRICE) AS total_spent  \r\n" + //
+            "FROM dev.customer C  \r\n" + //
+            "JOIN dev.orders O ON C.C_CUSTKEY = O.O_CUSTKEY  \r\n" + //
+            "JOIN dev.nation N ON C.C_NATIONKEY = N.N_NATIONKEY  \r\n" + //
+            "JOIN dev.region R ON N.n_regionkey = R.r_regionkey  \r\n" + //
+            "JOIN LargestMarketSegment L ON C.c_mktsegment = L.C_MKTSEGMENT\r\n" + //
+            "\r\n" + //
+            "WHERE R.r_name != 'EUROPE' \r\n" + //
+            "AND O.o_orderstatus != 'F' \r\n" + //
+            "AND O.o_orderpriority like '%URGENT%'  \r\n" + //
+            "\r\n" + //
+            "GROUP BY C.C_CUSTKEY \r\n" + //
             "ORDER BY total_spent DESC;";
         
         // Execute query
