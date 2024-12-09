@@ -42,12 +42,12 @@ public class AmazonRedshift {
     public static void main(String[] args) throws SQLException {
         AmazonRedshift q = new AmazonRedshift();
         q.connect();
-        // q.drop();
-        // q.create();
-        // q.insert();
-        // System.out.println(resultSetToString(q.query1(), 30));
+        q.drop();
+        q.create();
+        q.insert();
+        System.out.println(resultSetToString(q.query1(), 30));
         System.out.println(resultSetToString(q.query2(), 30));
-        // q.query3();
+        System.out.println(resultSetToString(q.query3(), 30));
         q.close();
     }
 
