@@ -44,12 +44,12 @@ public class AmazonRedshift {
     public static void main(String[] args) throws SQLException {
         AmazonRedshift q = new AmazonRedshift();
         q.connect();
-        q.drop();
-        q.create();
-        q.insert();
-        q.query1();
-        q.query2();
-        q.query3();
+        // q.drop();
+        // q.create();
+        // q.insert();
+        System.out.println(resultSetToString(q.query1(), 30));
+        // q.query2();
+        // q.query3();
         q.close();
     }
 
@@ -294,7 +294,7 @@ public class AmazonRedshift {
             "FROM dev.orders O " +
             "JOIN dev.customer C ON O.O_CUSTKEY = C.C_CUSTKEY " +
             "JOIN dev.nation N ON C.C_NATIONKEY = N.N_NATIONKEY " +
-            "WHERE N.N_NAME = 'USA' " +
+            "WHERE N.N_NAME = 'UNITED STATES' " +
             "ORDER BY O.O_ORDERDATE DESC " +
             "LIMIT 10;";
         
